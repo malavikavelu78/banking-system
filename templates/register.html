@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - CloudBank</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="card">
+    <h1>Create Account</h1>
+    {% for message in get_flashed_messages() %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+    <form method="POST">
+        <input name="username" placeholder="Username" minlength="3" required>
+        <input name="password" type="password" placeholder="Password (8+ characters)" minlength="8" required>
+        <button type="submit">Register</button>
+    </form>
+    <a href="/login">Already registered? Login</a>
+</main>
+</body>
+</html>

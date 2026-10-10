@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - CloudBank</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="card wide">
+    <h1>CloudBank Dashboard</h1>
+    <p>Welcome, {{ user["username"] }}!</p>
+    <h2>Balance: ₹{{ "%.2f"|format(user["balance"]) }}</h2>
+
+    {% for message in get_flashed_messages() %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+
+    <h3>Make a Transaction</h3>
+    <form action="/transaction" method="POST">
+        <input type="number" name="amount" min="0.01" max="100000"
+               step="0.01" placeholder="Amount" required>
+        <select name="type">
+            <option value="Deposit">Deposit</option>
+            <option value="Withdraw">Withdraw</option>
+        </select>
+        <button type="submit">Submit Transaction</button>
+    </form>
+
+    <h3>Recent Transactions</h3>
+    <table>
+        <tr><th>Type</th><th>Amount</th><th>Date</th></tr>
+        {% for t in transactions %}
+        <tr>
+            <td>{{ t["transaction_type"] }}</td>
+            <td>₹{{ "%.2f"|format(t["amount"]) }}</td>
+            <td>{{ t["created_at"] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">No transactions yet.</td></tr>
+        {% endfor %}
+    </table>
+
+    <form action="/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+</main>
+</body>
+</html>

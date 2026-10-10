@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    padding: 30px 15px;
+    background: #eef3f9;
+    font-family: Arial, sans-serif;
+    color: #203047;
+}
+.card {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px #00000012;
+}
+.wide { max-width: 850px; }
+h1 { color: #1559a6; }
+input, select, button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccd5e0;
+    border-radius: 6px;
+}
+button, .button {
+    display: inline-block;
+    background: #1559a6;
+    color: white;
+    border: none;
+    text-decoration: none;
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.secondary { background: #52647a; }
+.message { color: #a02b2b; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
