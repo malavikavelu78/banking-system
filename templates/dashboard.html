@@ -1,47 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard - CloudBank</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CloudBank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-<main class="card wide">
-    <h1>CloudBank Dashboard</h1>
-    <p>Welcome, {{ user["username"] }}!</p>
-    <h2>Balance: ₹{{ "%.2f"|format(user["balance"]) }}</h2>
+<body class="dashboard-body">
+<div class="app-layout">
+    <aside class="sidebar">
+        <a href="/dashboard" class="brand">
+            <span class="brand-icon">C</span>
+            <span>CloudBank</span>
+        </a>
 
-    {% for message in get_flashed_messages() %}
-        <p class="message">{{ message }}</p>
-    {% endfor %}
+        <p class="nav-label">WORKSPACE</p>
+        <a class="nav-link active" href="/dashboard">▦ &nbsp; Dashboard</a>
+        <a class="nav-link" href="#transactions">↔ &nbsp; Transactions</a>
+        <a class="nav-link" href="#banking-actions">＋ &nbsp; Deposit / Withdraw</a>
 
-    <h3>Make a Transaction</h3>
-    <form action="/transaction" method="POST">
-        <input type="number" name="amount" min="0.01" max="100000"
-               step="0.01" placeholder="Amount" required>
-        <select name="type">
-            <option value="Deposit">Deposit</option>
-            <option value="Withdraw">Withdraw</option>
-        </select>
-        <button type="submit">Submit Transaction</button>
-    </form>
+        <div class="sidebar-bottom">
+            <div class="security-note">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>Demo account</strong>
+                    <small>CloudBank learning project</small>
+                </div>
+            </div>
+            <form action="/logout" method="POST">
+                <button class="logout-button" type="submit">↪ &nbsp; Sign out</button>
+            </form>
+        </div>
+    </aside>
 
-    <h3>Recent Transactions</h3>
-    <table>
-        <tr><th>Type</th><th>Amount</th><th>Date</th></tr>
-        {% for t in transactions %}
-        <tr>
-            <td>{{ t["transaction_type"] }}</td>
-            <td>₹{{ "%.2f"|format(t["amount"]) }}</td>
-            <td>{{ t["created_at"] }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="3">No transactions yet.</td></tr>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">YOUR FINANCES AT A GLANCE</p>
+                <h1>Dashboard</h1>
+            </div>
+            <div class="profile-chip">
+                <div class="avatar">{{ user["username"][0]|upper }}</div>
+                <div>
+                    <strong>{{ user["username"] }}</strong>
+                    <small>Account holder</small>
+                </div>
+            </div>
+        </header>
+
+        {% for message in get_flashed_messages() %}
+            <div class="message">{{ message }}</div>
         {% endfor %}
-    </table>
 
-    <form action="/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
-</main>
+        <section class="welcome-row">
+            <div>
+                <h2>Welcome back, {{ user["username"] }}!</h2>
+                <p>Here is an overview of your demo account.</p>
+            </div>
+            <span class="account-badge"><span class="status-dot"></span> Account active</span>
+        </section>
+
+        <section class="summary-grid">
+            <article class="balance-card">
+                <div class="balance-heading">
+                    <span>Total available balance</span>
+                    <span class="balance-symbol">₹</span>
+                </div>
+                <h2>₹{{ "%.2f"|format(user["balance"]) }}</h2>
+                <p>Your current demo account balance</p>
+                <div class="balance-footer">
+                    <span>CloudBank account</span>
+                    <span>•••• {{ "%04d"|format(user["id"]) }}</span>
+                </div>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon purple">↔</div>
+                <p>Recent activity</p>
+                <h2>{{ transactions|length }}</h2>
+                <small>Transactions shown below</small>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon green">✓</div>
+                <p>Account status</p>
+                <h2 class="active-text">Active</h2>
+                <small>Demo account ready to use</small>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <article class="panel" id="banking-actions">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Quick transaction</h3>
+                        <p>Deposit or withdraw from your demo balance.</p>
+                    </div>
+                    <span class="panel-icon">↗</span>
+                </div>
+
+                <form action="/transaction" method="POST" class="transaction-form">
+                    <label for="amount">Transaction amount (INR)</label>
+                    <div class="amount-input">
+                        <span>₹</span>
+                        <input id="amount" type="number" name="amount"
+                               min="0.01" max="100000" step="0.01"
+                               placeholder="0.00" required>
+                    </div>
+
+                    <label for="type">Transaction type</label>
+                    <select id="type" name="type" required>
+                        <option value="Deposit">Deposit money</option>
+                        <option value="Withdraw">Withdraw money</option>
+                    </select>
+
+                    <button type="submit" class="primary-button">Submit transaction <span>→</span></button>
+                </form>
+
+                <p class="form-note">Demo only. No real money is moved.</p>
+            </article>
+
+            <article class="panel" id="transactions">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Recent transactions</h3>
+                        <p>Your latest account activity</p>
+                    </div>
+                    <span class="history-icon">◷</span>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>TRANSACTION</th>
+                                <th>DATE</th>
+                                <th class="amount-column">AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for t in transactions %}
+                            <tr>
+                                <td>
+                                    <div class="transaction-name">
+                                        <span class="transaction-icon {% if t['transaction_type'] == 'Deposit' %}deposit-icon{% else %}withdraw-icon{% endif %}">
+                                            {% if t["transaction_type"] == "Deposit" %}↓{% else %}↑{% endif %}
+                                        </span>
+                                        <div>
+                                            <strong>{{ t["transaction_type"] }}</strong>
+                                            <small>Transaction #{{ loop.index }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="date-cell">{{ t["created_at"] }}</td>
+                                <td class="amount-column {% if t['transaction_type'] == 'Deposit' %}positive{% else %}negative{% endif %}">
+                                    {% if t["transaction_type"] == "Deposit" %}+{% else %}-{% endif %}₹{{ "%.2f"|format(t["amount"]) }}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="empty-state">
+                                    <div class="empty-icon">↔</div>
+                                    <strong>No transactions yet</strong>
+                                    <p>Your activity will appear here.</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <footer class="page-footer">
+            <span>CloudBank · Demo banking application</span>
+            <span>Powered by Flask, SQLite and Docker</span>
+        </footer>
+    </main>
+</div>
 </body>
 </html>

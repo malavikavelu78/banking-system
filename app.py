@@ -107,7 +107,7 @@ def login():
 def dashboard():
     with get_db() as db:
         user = db.execute(
-            "SELECT username, balance FROM users WHERE id = ?",
+            "SELECT id, username, balance FROM users WHERE id = ?",
             (session["user_id"],)
         ).fetchone()
 
